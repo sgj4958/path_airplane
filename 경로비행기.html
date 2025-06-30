@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>연습장</title>
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" /> -->
+<script src="accordion.js" defer></script>
+  <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+        
+    div {
+        position: relative;
+        margin: 10px;
+
+        svg {
+            position: absolute;
+            path {
+                fill: none;
+                stroke-width: 1px;
+                stroke: #ccc;
+                stroke-dasharray: 10 4;
+            }
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            border: 1px solid #333;
+        }
+    }
+  </style>
+</head>
+<body>
+    <div class="body">
+
+        <div>
+            <canvas id="canvas" width="600" height="850"></canvas>
+            <svg width="600" height="850">
+                <path class="path"
+                    d="M47.79,62.99s173.97,86.3,165.75,176.03c-7.84,85.56-96.64,167.38-104.87,174.8-.36.32-.72.62-1.09.92-8.79,6.93-132.5,107.35,75.14,112.64,215.07,5.48,130.04,138.33,28.13,121.23-110.27-18.49-127.74,115.66-53.42,132.19,91.14,20.27,174.54,17.57,319.14-59.59,70.59-37.67,54.28-88.36,31.23-139-34.07-74.86-120.61-110.68-197.45-81.35-42.36,16.17-92.77,48.32-150.9,106.65-203.42,204.11-60.27-218.49,222.6-179.45s139.77-140.41,33.6-187.67c-72.06-32.08-101.98,17.84-112.33,43.84-29.45,73.97-39.08,87.67-78.81,123.97-23.31,21.3-107.53,82.19-74.66-101.37,32.88-183.56,177.4-203.42,229.45-157.53,22.54,19.87,36.3,47.95-69.86,97.95s-75.34-186.99,9.59-172.6,133.56,80.82,180.14,71.23,39.04-84.93-2.05-97.95" />
+            </svg>
+        </div>
+
+    </div>
+</body>
+<script>
+    const path = document.querySelector(".path")
+    const length = path.getTotalLength()
+    const getPoint = t => path.getPointAtLength(t % length)
+
+    const cropImage = {
+        width: 50,
+        height: 50
+    }
+
+    function animate(t) {
+        ctx.save()
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+        const point = {
+            a: getPoint(t),
+            b: getPoint(t + 1)
+        }
+        const degree = Math.atan2(point.b.y - point.a.y, point.b.x - point.a.x)
+
+        ctx.translate(point.a.x, point.a.y)
+        ctx.rotate(degree)
+        ctx.drawImage(img, -cropImage.width / 2, -cropImage.height / 2, cropImage.width, cropImage.height)
+
+        ctx.restore()
+        requestAnimationFrame(() => animate(t + 5))
+    }
+
+    const ctx = canvas.getContext("2d")
+    const img = new Image()
+    img.src = "비행기.png"
+    
+    ctx.fillStyle = "rgb(255 255 255 / 50%)"
+
+    img.addEventListener("load", () => animate(0))
+</script>
+</html>
